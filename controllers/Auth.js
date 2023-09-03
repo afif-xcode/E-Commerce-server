@@ -15,22 +15,22 @@ exports.signup = async(req, res) => {
         const {firstName, lastName, email, password, confirmPassword, role, otp} = req.body;
         // Validate data
         if(!firstName || !lastName || !email || !password || !confirmPassword || !role || !otp) {
-            return res.status(400).send({
+            return res.status(StatusCodes.BAD_REQUEST).send({
                 success : false,
                 message : "All fields are require",
             })
         }
         // password and confirmPassword is same or not
         if(password != confirmPassword) {
-            return res.status(400).send({
-                success : false,
-                message : "Password and Confirm Password did not match",
-            })
+            return res.status(StatusCodes.BAD_REQUEST).send({
+              success: false,
+              message: "Password and Confirm Password did not match",
+            });
         }
         // check user already present or not
         const isExitUser = await User.findOne({email});
         if(isExitUser) {
-            return res.status(401).send({
+            return res.status(StatusCodes.UNAUTHORIZED).send({
                 success : false,
                 message : "User Already exist",
             })
@@ -39,16 +39,16 @@ exports.signup = async(req, res) => {
         // Find otp and check it is same or not
         const responce = await OTP.find({email}).sort({ createdAt: -1 }).limit(1);
         if(responce.length === 0) {
-            return res.status(400).json({
-                success : false,
-                message : "The OTP is not valid"
-            })
+            return res.status(StatusCodes.BAD_REQUEST).json({
+              success: false,
+              message: "The OTP is not valid",
+            });
         }
         else if(otp !== responce[0].otp) {
-            return res.status(400).json({
-                success : false,
-                message : "The OTP is not valid"
-            })
+            return res.status(StatusCodes.BAD_REQUEST).json({
+              success: false,
+              message: "The OTP is not valid",
+            });
         }
 
         // password hashed and save it in variable
@@ -76,7 +76,7 @@ exports.signup = async(req, res) => {
         )
 
         // return responce
-        return res.status(201).json({
+        return res.status(StatusCodes.CREATED).json({
             success : true,
             data : user,
             message : "User registered successfully"

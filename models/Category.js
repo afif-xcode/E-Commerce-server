@@ -4,16 +4,16 @@ const categorySchema = mongoose.Schema(
     {
         categoryName : {
             type : String,
-            require : true,
+            required : true,
         },
         description : {
             type: String,
-            require : true,
+            required : true,
         },
         products : [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                require: true,
+                required: true,
             }
         ]
     }
