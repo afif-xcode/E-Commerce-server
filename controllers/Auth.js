@@ -29,7 +29,7 @@ exports.signup = async(req, res) => {
         }
         // check user already present or not
         const isExitUser = await User.findOne({email});
-        if(!isExitUser) {
+        if(isExitUser) {
             return res.status(401).send({
                 success : false,
                 message : "User Already exist",
@@ -37,7 +37,7 @@ exports.signup = async(req, res) => {
         }
 
         // Find otp and check it is same or not
-        const responce = await OTP.findOne({email}).sort({ createdAt: -1 }).limit(1);
+        const responce = await OTP.find({email}).sort({ createdAt: -1 }).limit(1);
         if(responce.length === 0) {
             return res.status(400).json({
                 success : false,
@@ -71,7 +71,7 @@ exports.signup = async(req, res) => {
                 password : hashedPassword,
                 role,
                 additionalDetails : profileDetails._id,
-                image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
+                image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}%20${lastName}`,
             }
         )
 
@@ -105,7 +105,7 @@ exports.login = async(req, res) => {
             )
         }
         // user present or not
-        const isPresentUser = await User.find({email}).populate('additionalDetails');
+        const isPresentUser = await User.findOne({email}).populate('additionalDetails');
         if(!isPresentUser) {
             return res.status(StatusCodes.NOT_FOUND).json(
                 {
@@ -115,7 +115,8 @@ exports.login = async(req, res) => {
             )
         }
         // password check
-        if(!await bcrypt.compare(password, isPresentUser.password)) {
+        const checkPasswordSameORnot = await bcrypt.compare(password, isPresentUser.password)
+        if(!checkPasswordSameORnot) {
             return res.status(StatusCodes.UNAUTHORIZED).json(
                 {
                     success : false,
@@ -123,7 +124,6 @@ exports.login = async(req, res) => {
                 }
             )
         }
-
         // create JWT token and store it 
         const token = jwt.sign(
             {email:isPresentUser.email, id: isPresentUser._id, role: isPresentUser.role},

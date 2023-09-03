@@ -4,6 +4,7 @@ require('dotenv').config();
 const ConnectDB = require('./config/database');
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 4000;
+const morgan = require('morgan');
 
 const userRoutes = require('./routes/User');
 
@@ -13,6 +14,7 @@ ConnectDB();
 // middleware
 app.use(express.json());
 app.use(cookieParser());
+app.use(morgan("dev"));
 
 // Settig the routes
 app.use("/api/v1/auth", userRoutes);

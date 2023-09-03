@@ -10,6 +10,10 @@ const {
     changePassword
 } = require('../controllers/Auth');
 
+const {
+    auth
+} = require('../middlewares/auth');
+
 
 // Routes for Login , SignUp and Authentication
 
@@ -27,7 +31,7 @@ router.post('/login', login);
 router.post('/sendotp', sendOtp);
 
 // Route for change password
-router.post('/changepassword', changePassword);
+router.post('/changepassword', auth, changePassword);
 
 
 // ********************************************************************************************************

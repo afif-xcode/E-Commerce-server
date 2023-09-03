@@ -4,15 +4,12 @@ const profileSchema = new mongoose.Schema(
     {
         gender : {
             type: String,
-            require: true,
         },
         dateOfBirth: {
             type: String,
-            require : true,
         },
         contactNumber : {
             type: String,
-            require : true,
         }
     }
 )

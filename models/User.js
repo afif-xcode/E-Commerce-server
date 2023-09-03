@@ -4,31 +4,31 @@ const userSchema = new mongoose.Schema(
     {
         firstName : {
             type: String,
-            require: true,
+            required: true,
             trim : true,
         },
         lastName : {
             type: String,
-            require : true,
+            required : true,
             trim : true,
         },
         email : {
             type: String,
-            require : true,
+            required : true,
             trim : true,
         },
         password : {
             type : String,
-            require: true,
+            required: true,
         },
         role : {
             type : String,
             enum : ["Admin", "Customer"],
-            require : true,
+            required : true,
         },
         additionalDetails : {
             type: mongoose.Schema.Types.ObjectId,
-            require : true,
+            required : true,
             ref : "Profile"
         },
         address : [
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
         ],
         image : {
             type: String,
-            require: true,
+            required: true,
         },
     },
     {timestamps : true}
