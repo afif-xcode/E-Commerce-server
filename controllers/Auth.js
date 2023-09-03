@@ -3,6 +3,9 @@ const Profile = require('../models/Profile');
 const OTP = require('../models/OTP');
 const bcrypt = require('bcrypt');
 const otpGenerator = require('otp-generator');
+const {StatusCodes} = require('http-status-codes');
+const jwt = require('jsonwebtoken');
+const mailSender = require('../utils/mailSender');
 
 
 // Sign up
@@ -88,6 +91,77 @@ exports.signup = async(req, res) => {
     }
 }
 
+exports.login = async(req, res) => {
+    try {
+        // Get email and password from req body
+        const {email, password} = req.body;
+        // validate data
+        if(!email || !password) {
+            return res.status(StatusCodes.NOT_FOUND).json(
+                {
+                    success : false,
+                    message : "All fields are require",
+                }
+            )
+        }
+        // user present or not
+        const isPresentUser = await User.find({email}).populate('additionalDetails');
+        if(!isPresentUser) {
+            return res.status(StatusCodes.NOT_FOUND).json(
+                {
+                    success : false,
+                    message : "User not found, Create you account first",
+                }
+            )
+        }
+        // password check
+        if(!await bcrypt.compare(password, isPresentUser.password)) {
+            return res.status(StatusCodes.UNAUTHORIZED).json(
+                {
+                    success : false,
+                    message : "Incorrect Password"
+                }
+            )
+        }
+
+        // create JWT token and store it 
+        const token = jwt.sign(
+            {email:isPresentUser.email, id: isPresentUser._id, role: isPresentUser.role},
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "24",
+            }
+        )
+
+        isPresentUser.token = token,
+        isPresentUser.password = undefined;
+
+        // save token on cookies and send responce
+        const option = {
+            expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+        }
+        res.cookie("token", token, option).status(StatusCodes.OK).json(
+            {
+                success : true,
+                token,
+                isPresentUser,
+                message : "Login Successfully",
+            }
+        )
+
+    }catch(error) {
+        console.log("ERROR FROM CONTROLLER AUTH LOGIN");
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+            {
+                success : false,
+                message : "Something went wrong while user login"
+            }
+        )
+    }
+}
+
 exports.sendOtp = async(req, res) => {
     try {
         // fetch email from body
@@ -127,5 +201,80 @@ exports.sendOtp = async(req, res) => {
             success : false,
             message : "Something went wrong while sending otp"
         })
+    }
+}
+
+exports.changePassword = async(req, res) => {
+    try {
+        // fetch user data from req.user
+        const userDetails = await User.findById(req.user.id);
+        // get old password and new password from req.body
+        const {oldPassword, newPassword} = req.body;
+        // validate data
+        if(!oldPassword || !newPassword) {
+            return res.status(StatusCodes.NOT_FOUND).json(
+                {
+                    success : false,
+                    message : "All fields are require"
+                }
+            )
+        }
+        // check old password  
+        const isPasswordMatch = await bcrypt.compare(oldPassword, userDetails.password);
+        if(!isPasswordMatch) {
+            res.status(StatusCodes.UNAUTHORIZED).json(
+                {
+                    success : false,
+                    message : "Wrong old password"
+                }
+            )
+        }
+
+        if(oldPassword === newPassword) {
+            return res.status(StatusCodes.NOT_MODIFIED).json(
+                {
+                    success : false,
+                    message : "Old password and New password is same"
+                }
+            )
+        }
+
+        // Update password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+        const updatedUserDetails = await User.findByIdAndUpdate(
+            req.user.id,
+            {password : hashedPassword},
+            {new : true}
+        ).populate('additionalDetails');
+
+        // send mail to user 
+        try {
+            const emailResponce = await mailSender(
+                updatedUserDetails.email,
+                "Password for you account has been updated",
+                "Passwrod Updated"
+            )
+        }catch(error) {
+
+        }
+
+        // send responce 
+        return res.status(StatusCodes.OK).json(
+            {
+                success: true,
+                updatedUserDetails,
+                message : "Password Changed"
+            }
+        )
+    }catch(error) {
+        console.log("ERROR FROM CONTROLLER AUTH CHANGE PASSWORD");
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+            {
+                success: false,
+                message : "Something went wrong while changing password"
+            }
+        )
     }
 }
