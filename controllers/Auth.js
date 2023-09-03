@@ -222,7 +222,7 @@ exports.changePassword = async(req, res) => {
         // check old password  
         const isPasswordMatch = await bcrypt.compare(oldPassword, userDetails.password);
         if(!isPasswordMatch) {
-            res.status(StatusCodes.UNAUTHORIZED).json(
+            return res.status(StatusCodes.UNAUTHORIZED).json(
                 {
                     success : false,
                     message : "Wrong old password"
