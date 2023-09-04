@@ -4,19 +4,19 @@ const addressSchema = new mongoose.Schema(
     {
         line1 : {
             type : String,
-            require : true,
+            required : true,
         },
         city : {
             type : String,
-            require: true,
+            required: true,
         },
         state : {
             type : String,
-            require : true,
+            required : true,
         },
         postalCode : {
             type : Number,
-            require : true,
+            required : true,
         }
     }
 )
