@@ -25,12 +25,9 @@ exports.auth = async(req, res, next) => {
 
         try {
             // Verifying the JWT token user secret key
-            console.log('ho');
-            console.log(process.env.JWT_SECRET);
             const decode = jwt.verify(token, process.env.JWT_SECRET);
             // storing the decoded JWT Payload in the request objce for further use
             req.user = decode;
-            console.log("Hello jee kaise ho ",decode);
         }catch(error) {
             // If Jwt token verifying failed 
             console.log("ERROR FROM JWT TOKEN VERIFY")
