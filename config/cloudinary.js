@@ -12,4 +12,4 @@ exports.cloudinaryConnect = () => {
         console.log('ERROR FROM CONFIG CLOUDINARY');
         console.log(error);
     }
-}
+} 
