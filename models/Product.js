@@ -17,10 +17,6 @@ const productSchema = new mongoose.Schema(
             required : true,
             trim : true,
         },
-        isAvailable : {
-            type : Boolean,
-            required : true,
-        },
         thumbnail : {
             type : String,
             required: true,

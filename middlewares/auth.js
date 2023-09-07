@@ -53,6 +53,53 @@ exports.auth = async(req, res, next) => {
         )
     }
 }
-
 // is Customer or not 
+exports.isCustomer = async (req, res, next) => {
+    try {
+        const userRole = req.user.role;
+
+        if(userRole !== "Customer") {
+            return res.status(StatusCodes.UNAUTHORIZED).json(
+                {
+                    success : false,
+                    message : "You are not allowed to acces protected route for customer"
+                }
+            )
+        }
+        next();
+    }catch(error) {
+        console.log("ERROR FROM MIDDLEWARE ISCUSTOMER");
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+            {
+                success : false,
+                message : "Something went wrong while cheking is customer or not"
+            }
+        )
+    }
+}
 // is Admin or not 
+exports.isAdmin = async (req, res, next) => {
+    try {
+        const userRole = req.user.role;
+
+        if(userRole !== "Admin") {
+            return res.status(StatusCodes.UNAUTHORIZED).json(
+                {
+                    success : false,
+                    message : "You are not allowed to acces protected route for admin"
+                }
+            )
+        }
+        next();
+    }catch(error) {
+        console.log("ERROR FROM MIDDLEWARE ISADMIN");
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+            {
+                success : false,
+                message : "Something went wrong while cheking is admin or not"
+            }
+        )
+    }
+}
