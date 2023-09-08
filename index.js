@@ -10,7 +10,8 @@ const { cloudinaryConnect } = require("./config/cloudinary");
 
 const userRoutes = require("./routes/User");
 const productRoutes = require("./routes/Product");
-const categoryRoutes = require('./routes/Category')
+const categoryRoutes = require('./routes/Category');
+const addressRoutes = require('./routes/Address');
 
 // Connect with Db
 ConnectDB();
@@ -34,6 +35,7 @@ cloudinaryConnect();
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/address", addressRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World").status(200);

@@ -8,7 +8,7 @@ const {
     categoryPageDetails
 } = require('../controllers/Category');
 
-const { auth, isAdmin } = require("../middlewares/auth")
+const { auth, isAdmin } = require("../middlewares/auth");
 
 
 router.post("/createCategory", auth, isAdmin, createCategory)
