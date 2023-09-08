@@ -10,7 +10,7 @@ const mailSender = async (email, title, body) => {
                 pass : process.env.MAIL_PASS,
             }
         })
-    
+     
         let mailDetails = {
             from : `Delicious Zone || <${process.env.MAIL_USER}>`,
             to : `${email}`,

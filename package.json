@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a MERN stack e-commerce WEB APPLICATION developed by developer Afif Islam and Tohidujjaman Hoque.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
