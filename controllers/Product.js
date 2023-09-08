@@ -1,14 +1,15 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { StatusCodes } = require("http-status-codes");
-const { imageUploadToCloudinary } = require("../utils/imageUploader");
+const { imageUploadToCloudinary, imageDeleteFromCloudinary } = require("../utils/imageUploader");
+require('dotenv').config();
 
 // Create a product
 exports.createProduct = async (req, res) => {
   try {
     // Get all data
     const { productName, description, price, category, tag } = req.body;
-    const thumbnail = req.files.thumbnail;
+    const thumbnail = req.files.thumbnailImage
     // validate data
     if (
       !productName ||
@@ -33,16 +34,22 @@ exports.createProduct = async (req, res) => {
       });
     }
     // upload thumbnail to cloudinary
+    const file = `${process.env.FOLDER_NAME}/ProductImage`;
     const thumbnailImageLink = await imageUploadToCloudinary(
       thumbnail,
-      process.env.FOLDER_NAME
+      file
     );
+    console.log(thumbnailImageLink);
+    const thumbnailImage = {
+      public_id : thumbnailImageLink.public_id,
+      image_link : thumbnailImageLink.secure_url,
+    }
     // create product on db
     const productDetails = await Product.create({
       productName,
       description,
       price,
-      thumbnail: thumbnailImageLink,
+      thumbnail: thumbnailImage,
       category,
       tag,
     });
@@ -63,6 +70,7 @@ exports.createProduct = async (req, res) => {
       message: "Product Created successfully",
     });
   } catch (error) {
+    console.log(error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Something went wrong while creating product",
@@ -74,10 +82,9 @@ exports.createProduct = async (req, res) => {
 exports.editProductDetails = async (req, res) => {
   try {
     //get the product id from the params
-    const prodID = req.params.id;
     //get the details of the product to be updated
-    const { productName, description, price, category, tag } = req.body;
-
+    const {prodID, productName, description, price, category, tag } = req.body;
+    const thumbnail = req.files.thumbnailImage
     //validate the data of the products
 
     if (!productName || !description || !price || !category || !tag) {
@@ -103,6 +110,24 @@ exports.editProductDetails = async (req, res) => {
     existingProduct.category = category;
     existingProduct.tag = tag;
 
+    if(thumbnail) {
+      // delete old thumbanil and upload new thumbnail on cloudinary
+      const result = await imageDeleteFromCloudinary(existingProduct.thumbnail.public_id);
+      console.log('Image deleted successfully');
+      // upload thumbnail to cloudinary
+      const file = `${process.env.FOLDER_NAME}/ProductImage`;
+      const thumbnailImageLink = await imageUploadToCloudinary(
+        thumbnail,
+        file
+      );
+      console.log(thumbnailImageLink);
+      const thumbnailImage = {
+        public_id : thumbnailImageLink.public_id,
+        image_link : thumbnailImageLink.secure_url,
+      }
+      existingProduct.thumbnail = thumbnailImage;
+    } 
+
     //save the updated product
     const updatedProduct = await existingProduct.save();
 
@@ -113,6 +138,7 @@ exports.editProductDetails = async (req, res) => {
       product: updatedProduct,
     });
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "There was an error while updating a product",
@@ -124,8 +150,7 @@ exports.editProductDetails = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     // Get the product id to delete it
-    const prodID = req.params.id;
-
+    const {prodID} = req.body;
     // Check if the product exits or not
     const existingProduct = await Product.findById(prodID);
     if (!existingProduct) {
@@ -135,8 +160,23 @@ exports.deleteProduct = async (req, res) => {
       });
     }
 
+    // before deleting form db delete image from cloudinary
+    const result = await imageDeleteFromCloudinary(existingProduct.thumbnail.public_id);
+    console.log("Image deleted successfully");
+
+    const categoryDetails = await Category.findByIdAndUpdate(
+      { _id: existingProduct.category },
+      {
+        $pull: {
+          products: existingProduct._id,
+        },
+      },
+      { new: true }
+    );
+
+
     // Delete the existing product from database
-    await existingProduct.remove();
+    const deletedProduct = await Product.findByIdAndDelete(prodID);
 
     // Return response
     return res.status(StatusCodes.OK).json({
@@ -144,6 +184,7 @@ exports.deleteProduct = async (req, res) => {
       message: "Product deleted successfully",
     });
   } catch (error) {
+    console.log(error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Something went wrong while deleting the product",
@@ -155,7 +196,7 @@ exports.deleteProduct = async (req, res) => {
 exports.getAllProduct = async (req, res) => {
   try {
     // Fetch all the products from the database
-    const existingProducts = await Product.find();
+    const existingProducts = await Product.find({}).populate('category');
     if (!existingProducts) {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
@@ -179,10 +220,10 @@ exports.getAllProduct = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     // Get the id from the params
-    const productID = req.params.id;
+    const {productID} = req.body;
 
     // Find the existing product by its id in database
-    const getexistingProduct = await Product.findById(productID);
+    const getexistingProduct = await Product.findById(productID).populate('category');
 
     //check if there exists a product with this id
     if (!getexistingProduct) {
@@ -197,7 +238,7 @@ exports.getProductById = async (req, res) => {
     res.status(StatusCodes.OK).json({
       success: true,
       message: "Successfully Found the product",
-      product: existingProduct,
+      product: getexistingProduct,
     });
   } catch (error) {
     console.log("Error from the get product by id controller");

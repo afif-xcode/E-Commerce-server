@@ -13,7 +13,6 @@ exports.auth = async(req, res, next) => {
             req.body.token || 
             req.header("Authorization").replace("Bearer ", "");
 
-        console.log(token);
         
         // If JWT token is missing, return Unuthorized responce
         if(!token) {

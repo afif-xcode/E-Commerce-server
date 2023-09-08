@@ -8,11 +8,11 @@ const {
   editProductDetails,
   deleteProduct,
 } = require("../controllers/Product");
+const { auth, isAdmin } = require("../middlewares/auth");
 
-
-router.post('/create', createProduct);
-router.post('/editproduct', editProductDetails);
-router.post('/deleteproduct', deleteProduct);
+router.post('/createproduct', auth, isAdmin, createProduct);
+router.post('/editproduct', auth, isAdmin, editProductDetails);
+router.delete('/deleteproduct', auth, isAdmin, deleteProduct);
 router.get('/getallproduct', getAllProduct);
 router.get('/getproductbyid', getProductById);
 
