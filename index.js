@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 4000;
 const morgan = require("morgan");
 
 const userRoutes = require("./routes/User");
+const productRoutes = require("./routes/ProductRoute");
 
 // Connect with Db
 ConnectDB();
@@ -18,6 +19,7 @@ app.use(morgan("dev"));
 
 // Settig the routes
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/products", productRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World").status(200);
