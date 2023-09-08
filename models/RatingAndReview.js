@@ -15,7 +15,7 @@ const ratingAndReviewSchema = mongoose.Schema(
             type : String,
             required : true,
         },
-        products : {
+        product : {
             type : mongoose.Schema.Types.ObjectId,
             required : true,
             ref: "Product",

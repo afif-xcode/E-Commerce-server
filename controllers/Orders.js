@@ -22,10 +22,9 @@ exports.createOrder = async(req, res) => {
             message: "All fields are required",
             });
         }
-        
         // creating a new Order 
         const newOrder = await Orders.create(
-            {
+            {   user : userId,
                 products,
                 totalAmount,
                 paymentMod,
@@ -33,14 +32,15 @@ exports.createOrder = async(req, res) => {
             }
         )
         // insert order id on user model 
-        const updatedUser = await User.findById(
-            userId,
+        const updateUser = await User.findByIdAndUpdate(
+            { _id: userId },
             {
-                $push : {
-                    orders : newOrder._id,
-                }
-            }
-        ).populate('orders');
+              $push: {
+                orders: newOrder._id,
+              },
+            },
+            { new: true }
+          );
 
         return res.status(StatusCodes.OK).json(
             {
@@ -48,7 +48,7 @@ exports.createOrder = async(req, res) => {
                 message : "Ordered Placed successfully",
                 data : {
                     newOrder,
-                    updatedUser,
+                    updateUser,
                 },
             }
         )

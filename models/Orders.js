@@ -34,7 +34,9 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMod : {
         type : String,
-        enum : ["Online", "COD"]
+        enum : ["Online", "COD"],
+        default : "COD",
+        required : true,
     },
     shippingAddress : {
         type : mongoose.Schema.Types.ObjectId,
