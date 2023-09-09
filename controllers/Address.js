@@ -142,26 +142,27 @@ exports.deleteAddressById = async (req, res) => {
   }
 };
 
-// Show all address
-exports.getAllAddresses = async (req, res) => {
-  try {
-    const addresses = await Address.find();
-    if (!addresses) {
-      res.status(StatusCodes.NOT_FOUND).json({
-        success: false,
-        message: "Not found any addresses",
-      });
-    }
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: "Fetched all addresses",
-      address: addresses,
-    });
-  } catch (error) {
-    console.log("Error from Address Controller while getting all address!");
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "Failed to retrieve addresses",
-    });
-  }
-};
+// // Show all address
+// exports.getAllAddresses = async (req, res) => {
+//   try {
+//     const userId = req.params.id
+//     const addresses = await Address.find();
+//     if (!addresses) {
+//       res.status(StatusCodes.NOT_FOUND).json({
+//         success: false,
+//         message: "Not found any addresses",
+//       });
+//     }
+//     res.status(StatusCodes.OK).json({
+//       success: true,
+//       message: "Fetched all addresses",
+//       address: addresses,
+//     });
+//   } catch (error) {
+//     console.log("Error from Address Controller while getting all address!");
+//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+//       success: false,
+//       message: "Failed to retrieve addresses",
+//     });
+//   }
+// };
