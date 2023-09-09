@@ -13,6 +13,7 @@ const productRoutes = require("./routes/Product");
 const categoryRoutes = require('./routes/Category');
 const addressRoutes = require('./routes/Address');
 const orderRoutes = require('./routes/Orders');
+const profileRoutes = require('./routes/Profile');
 
 // Connect with Db
 ConnectDB();
@@ -38,6 +39,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/address", addressRoutes);
 app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/profile", profileRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World").status(200);
