@@ -29,11 +29,14 @@ const orderSchema = new mongoose.Schema({
     },
     status : {
         type : String,
-        enum : ['Ordered', "Confirmed", "Shipped", "Cancelled", "Completed"]
+        enum : ['Ordered', "Confirmed", "Shipped", "Cancelled", "Completed"],
+        default : 'Ordered'
     },
     paymentMod : {
         type : String,
-        enum : ["Online", "COD"]
+        enum : ["Online", "COD"],
+        default : "COD",
+        required : true,
     },
     shippingAddress : {
         type : mongoose.Schema.Types.ObjectId,
@@ -42,4 +45,4 @@ const orderSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('Orders', orderSchema);

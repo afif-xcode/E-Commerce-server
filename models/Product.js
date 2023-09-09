@@ -18,8 +18,14 @@ const productSchema = new mongoose.Schema(
             trim : true,
         },
         thumbnail : {
-            type : String,
-            required: true,
+            public_id : {
+                type: String,
+                required : true,
+            },
+            image_link : {
+                type: String,
+                required : true,
+            }
         },
         category: {
             type: mongoose.Schema.Types.ObjectId,

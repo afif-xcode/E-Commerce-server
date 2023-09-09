@@ -59,25 +59,33 @@ exports.signup = async (req, res) => {
       });
     }
 
-    // password hashed and save it in variable
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // create additional details and add it
-    const profileDetails = await Profile.create({
-      gender: null,
-      dateOfBirth: null,
-      contactNumber: null,
-    });
-    // Create the user
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      role,
-      additionalDetails: profileDetails._id,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}%20${lastName}`,
-    });
+        // password hashed and save it in variable
+        const hashedPassword = await bcrypt.hash(password, 10);
+       
+        // create additional details and add it
+        const profileDetails = await Profile.create(
+            {
+                gender : null,
+                dateOfBirth: null,
+                contactNumber: null
+            }
+        )
+        // Create the user
+        const image = {
+            public_id : firstName,
+            image_link : `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}%20${lastName}`
+        }
+        const user = await User.create(
+            {
+                firstName,
+                lastName,
+                email,
+                password : hashedPassword,
+                role,
+                additionalDetails : profileDetails._id,
+                image: image,
+            }
+        )
 
     // return responce
     return res.status(StatusCodes.CREATED).json({
