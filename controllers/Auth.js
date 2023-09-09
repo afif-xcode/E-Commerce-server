@@ -281,32 +281,3 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
-
-// // show all addresses of an user
-// exports.getAllAddressesOfUser = async (req, res) => {
-//   try {
-//     const userId = req.params.id;
-//     const user = await User.findById(userId).populate("Address");
-
-//     if (!user) {
-//       return res.status(StatusCodes.NOT_FOUND).json({
-//         success: false,
-//         message: "User not found",
-//       });
-//     }
-
-//     res.status(StatusCodes.OK).json({
-//       success: true,
-//       message: "Fetched all addresses of a single user",
-//       address: [user.addresses],
-//     });
-//   } catch (error) {
-//     console.log(
-//       "Error from Auth controller while fetching all address of single user"
-//     );
-//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-//       success: false,
-//       message: "Failed to retrieve user addresses",
-//     });
-//   }
-// };
