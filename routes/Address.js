@@ -11,11 +11,11 @@ const {
 
 const { auth, isCustomer } = require("../middlewares/auth");
 
-router.post("/createaddress", auth, isCustomer, createAddress)
-router.put('/updateaddress', auth, isCustomer, updateAddressById);
-router.get("/getaddress",auth, getAddressById)
-router.delete("/deleteaddress", auth, isCustomer,deleteAddressById)
-router.get("/getalladdress",auth, getAllAddresses)
+router.post("/createAddress", auth, isCustomer, createAddress)
+router.put('/updateAddress', auth, isCustomer, updateAddressById);
+router.get("/getAddress",auth, getAddressById)
+router.delete("/deleteAddress", auth, isCustomer,deleteAddressById)
+router.get("/getAllAddress",auth, getAllAddresses)
 
 
 module.exports = router;

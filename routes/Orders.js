@@ -6,6 +6,6 @@ const {
 } = require("../controllers/Orders");
 const { auth, isCustomer } = require("../middlewares/auth");
 
-router.post('/creatorder', auth, isCustomer, createOrder);
+router.post('/creatOrder', auth, isCustomer, createOrder);
 
 module.exports = router;

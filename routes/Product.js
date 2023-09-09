@@ -16,11 +16,11 @@ const {
   getAllRatingReview,
 } = require('../controllers/RatingAndReview')
 
-router.post('/createproduct', auth, isAdmin, createProduct);
-router.post('/editproduct', auth, isAdmin, editProductDetails);
-router.delete('/deleteproduct', auth, isAdmin, deleteProduct);
-router.get('/getallproduct', getAllProduct);
-router.get('/getproductbyid', getProductById);
+router.post('/createProduct', auth, isAdmin, createProduct);
+router.post('/editProduct', auth, isAdmin, editProductDetails);
+router.delete('/deleteProduct', auth, isAdmin, deleteProduct);
+router.get('/getAllProduct', getAllProduct);
+router.get('/getProductById', getProductById);
 
 // ********************************************************************************************************
 //                                      Rating and Review
