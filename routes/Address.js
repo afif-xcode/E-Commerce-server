@@ -15,7 +15,7 @@ router.post("/createAddress", auth, isCustomer, createAddress)
 router.put('/updateAddress', auth, isCustomer, updateAddressById);
 router.get("/getAddress",auth, getAddressById)
 router.delete("/deleteAddress", auth, isCustomer,deleteAddressById)
-router.get("/getAllAddress",auth, getAllAddresses)
+router.get("/getAllAddress", auth, isCustomer, getAllAddresses)
 
 
 module.exports = router;
